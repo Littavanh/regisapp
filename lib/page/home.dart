@@ -21,7 +21,7 @@ class _HomeState extends State<Home> {
       
     
      Text(
-      'ນັດໝາຍ',
+      'ໜ້າການນັດໝາຍ',
       
     ),
    
