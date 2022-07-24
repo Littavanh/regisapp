@@ -14,11 +14,11 @@ class EditButton extends StatelessWidget {
             border: Border.all(color: primaryColor, width: 2),
             borderRadius: BorderRadius.circular(100)),
         child: IconButton(
-            tooltip: 'ແກ້ໄຂ',
+            tooltip: 'ເບິ່ງລາຍລະອຽດ',
             iconSize: 20,
             padding: const EdgeInsets.all(0),
             onPressed: onPressed,
-            icon: const Icon(Icons.edit, color: primaryColor)));
+            icon: const Icon(Icons.remove_red_eye, color: primaryColor)));
   }
 }
 
