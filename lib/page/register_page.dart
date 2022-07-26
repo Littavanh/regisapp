@@ -337,8 +337,8 @@ class _RegisScreenState extends State<RegisScreen> {
               title: 'ບັນທືກ',
               content: 'ບັນທືກການລົງທະບຽນສຳເລັດແລ້ວ')
           .then((value) {
-        context.read<ReserveBloc>().add(FetchMemberReserve(status: 'Pending'));
-        Navigator.pop(context);
+        context.read<ReserveBloc>().add(FetchMemberReserve(status: 'Pending',date: sqldate.format(DateTime.parse(date))));
+        
       });
     }).catchError((e) {
       Navigator.pop(context);

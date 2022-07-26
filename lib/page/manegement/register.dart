@@ -341,7 +341,7 @@ class _RegisterCovidPageState extends State<RegisterCovidPage> {
               title: 'ບັນທືກ',
               content: 'ບັນທືກການລົງທະບຽນສຳເລັດແລ້ວ')
           .then((value) {
-        context.read<ReserveBloc>().add(FetchMemberReserve(status: 'Pending'));
+        context.read<ReserveBloc>().add(FetchMemberReserve(status: 'Pending',date: sqldate.format(DateTime.parse(date))));
         Navigator.pop(context);
       });
     }).catchError((e) {
