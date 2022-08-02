@@ -23,3 +23,8 @@ class FetchMemberReserve extends ReserveEvent {
     this.date
   });
 }
+
+class FetchUserComplete extends ReserveEvent{
+
+}
+class FetchUserPending extends ReserveEvent{}

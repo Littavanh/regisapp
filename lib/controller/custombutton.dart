@@ -39,6 +39,6 @@ class DeleteButton extends StatelessWidget {
             iconSize: 20,
             padding: const EdgeInsets.all(0),
             onPressed: onPressed,
-            icon: const Icon(Icons.delete, color: Colors.red)));
+            icon: const Icon(Icons.cancel, color: Colors.red)));
   }
 }

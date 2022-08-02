@@ -23,32 +23,27 @@ import 'package:regisapp/style/color.dart';
 import '../provider/notification_provider.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({ Key? key }) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
- 
+
 class _HomePageState extends State<HomePage> {
- final cusmtomerWidgets = <Widget>[
+  final cusmtomerWidgets = <Widget>[
     const HomeScreen(),
     const RegisScreen(),
     const CustomerNotification(),
     const EditProfilePage(),
   ];
   int _currentIndex = 0;
-  
 
-  
-  
   @override
-void initState() {
+  void initState() {
     SocketController.initialSocket();
 
     // SocketController.socket
     //     .on("message", (data) => stream.socketRespone.sink.add(data));
-
-   
 
     SocketController.socket.on("notifi_msg", (data) {
       if (isAdmin || isEmployee) {
@@ -66,14 +61,14 @@ void initState() {
     super.initState();
   }
 
-  
   @override
   dispose() {
     // stream.dispose();
     SocketController.disconnect();
     super.dispose();
   }
-Future<void> _onRefreshMemberNotifications() async {
+
+  Future<void> _onRefreshMemberNotifications() async {
     await Future.delayed(const Duration(seconds: 0));
     context.read<NotificationBloc>().add(FetchMemberNotification());
   }
@@ -83,106 +78,105 @@ Future<void> _onRefreshMemberNotifications() async {
     context.read<NotificationBloc>().add(FetchAllNotification());
   }
 
-
-
-
-
   @override
   Widget build(BuildContext context) {
-    return Consumer<NotificationManager>(builder: (context, values, child) {
-      final cusmtomerItems = <BottomNavigationBarItem>[
-        const BottomNavigationBarItem(
-            icon: Icon(Icons.home_rounded), label: 'ໜ້າຫຼັກ'),
-        const BottomNavigationBarItem(
-            icon: Icon(Icons.menu_open_rounded), label: 'ລົງທະບຽນ'),
-              BottomNavigationBarItem(
-            icon: values.adminNotifi == ''
-                ? const Icon(Icons.notifications_active_rounded)
-                : Badge(
-                    child: const Icon(Icons.notifications_active_rounded),
-                    badgeColor: Colors.red,
-                    badgeContent: Text(
-                      values.adminNotifi,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold),
-                    )), label: 'ແຈ້ງເຕືອນ'),
-             const BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle), label: 'ເພີ່ມເຕີມ'),
-        
-      ];
+    return Consumer<NotificationManager>(
+      builder: (context, values, child) {
+        final cusmtomerItems = <BottomNavigationBarItem>[
+          const BottomNavigationBarItem(
+              icon: Icon(Icons.home_rounded), label: 'ໜ້າຫຼັກ'),
+          const BottomNavigationBarItem(
+              icon: Icon(Icons.menu_open_rounded), label: 'ລົງທະບຽນ'),
+          BottomNavigationBarItem(
+              icon: values.adminNotifi == ''
+                  ? const Icon(Icons.notifications_active_rounded)
+                  : Badge(
+                      child: const Icon(Icons.notifications_active_rounded),
+                      badgeColor: Colors.red,
+                      badgeContent: Text(
+                        values.adminNotifi,
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold),
+                      )),
+              label: 'ແຈ້ງເຕືອນ'),
+          const BottomNavigationBarItem(
+              icon: Icon(Icons.account_circle), label: 'ເພີ່ມເຕີມ'),
+        ];
 
-      return BlocBuilder<NotificationBloc, NotificationState>(
-        builder: (_, state) {
-          if (state is NotificationLoadCompleteState) {
-            if (state.reserve != null) {
+        return BlocBuilder<NotificationBloc, NotificationState>(
+          builder: (_, state) {
+            if (state is NotificationLoadCompleteState) {
+              if (state.reserve != null) {
+                Future.delayed(const Duration(seconds: 0)).then((value) =>
+                    context
+                        .read<NotificationManager>()
+                        .setAdminNotifi(notifi: '1'));
+              } else {
+                Future.delayed(const Duration(seconds: 0)).then((value) =>
+                    context
+                        .read<NotificationManager>()
+                        .setAdminNotifi(notifi: ''));
+              }
+            }
+
+            if (state is AllNotificationLoadCompleteState) {
+              if (state.reserves.isNotEmpty) {
+                Future.delayed(const Duration(seconds: 0)).then((value) =>
+                    context
+                        .read<NotificationManager>()
+                        .setAdminNotifi(notifi: '${state.reserves.length}'));
+              } else {
+                Future.delayed(const Duration(seconds: 0)).then((value) =>
+                    context
+                        .read<NotificationManager>()
+                        .setAdminNotifi(notifi: ''));
+              }
+            }
+
+            if (state is NotificationErrorState) {
               Future.delayed(const Duration(seconds: 0)).then((value) => context
                   .read<NotificationManager>()
-                  .setAdminNotifi(notifi: '1'));
-            } else {
+                  .setAdminNotifi(notifi: ''));
+
               Future.delayed(const Duration(seconds: 0)).then((value) => context
                   .read<NotificationManager>()
                   .setAdminNotifi(notifi: ''));
             }
-          }
 
-          if (state is AllNotificationLoadCompleteState) {
-            if (state.reserves.isNotEmpty) {
-              Future.delayed(const Duration(seconds: 0)).then((value) => context
-                  .read<NotificationManager>()
-                  .setAdminNotifi(notifi: '${state.reserves.length}'));
-            } else {
-              Future.delayed(const Duration(seconds: 0)).then((value) => context
-                  .read<NotificationManager>()
-                  .setAdminNotifi(notifi: ''));
-            }
-          }
-
-          if (state is NotificationErrorState) {
-            Future.delayed(const Duration(seconds: 0)).then((value) => context
-                .read<NotificationManager>()
-                .setAdminNotifi(notifi: ''));
-
-            Future.delayed(const Duration(seconds: 0)).then((value) =>
-                context.read<NotificationManager>().setAdminNotifi(notifi: ''));
-          }
-
-   
-              return Scaffold(
-                  backgroundColor: Theme.of(context).backgroundColor,
-                  appBar: AppBar(
-                    title: const Text('REGISTER COVID APP'),
-                    actions: [
-                      IconButton(
-                          onPressed: () async {
-                            final remeber = RememberMe(
-                                username: '', password: '', remember: false);
-                            await remeber.setUser();
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => const LoginPage()));
-                          },
-                          tooltip: 'ອອກຈາກລະບົບ',
-                          icon: const Icon(Icons.settings_power_outlined,
-                              color: iconColor)),
-                    ],
-                  ),
-                 
-                  body: 
-                       cusmtomerWidgets[_currentIndex],
-                  bottomNavigationBar: BottomNavigationBar(type: BottomNavigationBarType.fixed,
-                     
-                      selectedItemColor: primaryColor,
-                      currentIndex: _currentIndex,
-                      items: cusmtomerItems,
-                      onTap: (int index) => setState(() {
-                            _currentIndex = index;
-                          })));
-            },
-          );
-        },
-      );
-    }
+            return Scaffold(
+                backgroundColor: Theme.of(context).backgroundColor,
+                appBar: AppBar(
+                  title: const Text('REGISTER COVID APP'),
+                  actions: [
+                    IconButton(
+                        onPressed: () async {
+                          final remeber = RememberMe(
+                              username: '', password: '', remember: false);
+                          await remeber.setUser();
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const LoginPage()));
+                        },
+                        tooltip: 'ອອກຈາກລະບົບ',
+                        icon: const Icon(Icons.settings_power_outlined,
+                            color: iconColor)),
+                  ],
+                ),
+                body: cusmtomerWidgets[_currentIndex],
+                bottomNavigationBar: BottomNavigationBar(
+                    type: BottomNavigationBarType.fixed,
+                    selectedItemColor: primaryColor,
+                    currentIndex: _currentIndex,
+                    items: cusmtomerItems,
+                    onTap: (int index) => setState(() {
+                          _currentIndex = index;
+                        })));
+          },
+        );
+      },
+    );
   }
+}

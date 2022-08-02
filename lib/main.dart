@@ -49,6 +49,8 @@ class MyApp extends StatelessWidget {
                 DistrictBloc(districtRepo: DistrictRepository())),
         BlocProvider<PostBloc>(
             create: (_context) => PostBloc(postRepo: PostRepository())),
+            //  BlocProvider<ReserveBloc>(
+            // create: (_context) => ReserveBloc(reserveRepo: ReserveRepository())),
         BlocProvider<UserBloc>(
             create: (_context) => UserBloc(userRepo: UserRepository())),
         BlocProvider<VacsiteBloc>(

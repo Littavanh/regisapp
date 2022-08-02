@@ -1,38 +1,33 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:regisapp/page/manegement/form/post_form.dart';
-import 'package:regisapp/alert/progress.dart';
-import 'package:regisapp/component/component.dart';
-import 'package:regisapp/controller/custombutton.dart';
-import 'package:regisapp/model/post_model.dart';
-import 'package:regisapp/page/postdetail_page.dart';
-import 'package:regisapp/provider/bloc/post_bloc.dart';
-import 'package:regisapp/provider/event/post_event.dart';
-import 'package:regisapp/provider/state/post_state.dart';
-import 'package:regisapp/source/source.dart';
-import 'package:regisapp/style/color.dart';
-import 'package:regisapp/style/textstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:regisapp/component/component.dart';
+import 'package:regisapp/model/reserve_model.dart';
+import 'package:regisapp/provider/bloc/reserve_bloc.dart';
+import 'package:regisapp/provider/event/reserve_event.dart';
 
-class PostPage extends StatefulWidget {
-  const PostPage({Key? key}) : super(key: key);
+import 'package:regisapp/provider/state/reserve_state.dart';
+import 'package:regisapp/style/color.dart';
+import 'package:regisapp/style/textstyle.dart';
+
+class Reserve_History extends StatefulWidget {
+  const Reserve_History({ Key? key }) : super(key: key);
 
   @override
-  State<PostPage> createState() => _PostPageState();
+  State<Reserve_History> createState() => _Reserve_HistoryState();
 }
 
-class _PostPageState extends State<PostPage> {
-  Future<void> _onRefresh() async {
-    Future.delayed(const Duration(seconds: 0));
-    context.read<PostBloc>().add(FetchPost());
-  }
+class _Reserve_HistoryState extends State<Reserve_History> {
 
+   Future<void> _onRefresh() async {
+    Future.delayed(const Duration(seconds: 0));
+    context.read<ReserveBloc>().add(FetchUserComplete());
+  }
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+ Widget build(BuildContext context) {
+  return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
-        title: const Text("ຂໍ້ມູນຂ່າວສານ"),
+        title: const Text("ປະຫວັດການສັກວັກຊີນ"),
         // actions: [
         //   IconButton(
         //       onPressed: () => Navigator.push(
@@ -46,32 +41,32 @@ class _PostPageState extends State<PostPage> {
       ),
       body: Padding(
           padding: const EdgeInsets.all(10),
-          child: BlocBuilder<PostBloc, PostState>(
+          child: BlocBuilder<ReserveBloc, ReserveState>(
             builder: (context, state) {
-              if (state is PostInitialState) {
+              if (state is ReserveInitialState) {
                 _onRefresh();
                 return const Center(child: CircularProgressIndicator());
               }
 
-              if (state is PostLoadingState) {
+              if (state is ReserveLoadingState) {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              if (state is PostLoadCompleteState) {
-                if (state.posts.isEmpty) return _isStateEmty();
+              if (state is ReserveLoadCompleteState) {
+                if (state.reserves.isEmpty) return _isStateEmty();
                 return RefreshIndicator(
                   onRefresh: _onRefresh,
                   child: ListView.builder(
-                      itemCount: state.posts.length,
+                      itemCount: state.reserves.length,
                       itemBuilder: (_, index) {
-                        return buildCard(state.posts[index]);
+                        return buildCard(state.reserves[index]);
                       }
                       
                       ),
                 );
               }
 
-              if (state is PostErrorState) {
+              if (state is ReserveErrorState) {
                 return _isStateEmty(message: state.error);
               } else {
                 return _isStateEmty();
@@ -81,9 +76,8 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
-  Widget buildCard(PostModel post) {
-    return InkWell( onTap: () => Navigator.push(context,
-          MaterialPageRoute(builder: (_) => PostDetailPage(post: post))),
+ Widget buildCard(ReserveModel reserve) {
+    return InkWell( 
       child: Component(
         
         padding: EdgeInsets.zero,
@@ -95,25 +89,7 @@ class _PostPageState extends State<PostPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: post.image!.isNotEmpty
-                        ? CachedNetworkImage(
-                            fit: BoxFit.cover,
-                            imageUrl: urlImg + "/${post.image}",
-                            placeholder: (context, url) =>
-                                const Center(child: CircularProgressIndicator()),
-                            errorWidget: (context, url, error) => const Icon(
-                                Icons.image_not_supported_outlined,
-                                size: 70),
-                          )
-                        : const Icon(Icons.image_not_supported_outlined,
-                            size: 70)),
-              ),
-              const SizedBox(width: 9),
+          
               Flexible(
                 flex: 1,
                 fit: FlexFit.tight,
@@ -122,8 +98,8 @@ class _PostPageState extends State<PostPage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("ຫົວຂໍ້ຂ່າວ: ${post.name}", style: bodyText2Bold),
-                    Text('ລາຍລະອຽດຂ່າວ: ${post.detail}',
+                    Text("ວັນທີສັກ: ${reserve.date}", style: bodyText2Bold),
+                    Text('ລາຍລະອຽດ: ເຂັມທີ ${reserve.level}, ${reserve.vaccineId}, ສູນ ${reserve.vaccinationSiteId} ',
                         softWrap: true,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis),
@@ -163,7 +139,8 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
-  Widget _isStateEmty({String? message}) {
+
+ Widget _isStateEmty({String? message}) {
     return Center(
         child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -179,26 +156,4 @@ class _PostPageState extends State<PostPage> {
       ],
     ));
   }
-
-  void onDelete(int id) async {
-    myProgress(context, null);
-    await PostModel.detelePost(id: id).then((delete) {
-      if (delete.code == 200) {
-        Navigator.pop(context);
-        showCompletedDialog(
-                context: context, title: 'ລຶບ', content: 'ລຶບຂໍ້ມູນສຳເລັດແລ້ວ')
-            .then((value) => _onRefresh());
-      } else {
-        Navigator.pop(context);
-        showFailDialog(
-            context: context,
-            title: 'ລຶບ',
-            content: delete.error ?? 'ລຶບຂໍ້ມູນບໍ່ສຳເລັດ');
-      }
-    }).catchError((onError) {
-      Navigator.pop(context);
-      showFailDialog(
-          context: context, title: 'ລຶບ', content: onError.toString());
-    });
   }
-}

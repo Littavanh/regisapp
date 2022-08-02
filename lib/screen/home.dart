@@ -8,14 +8,21 @@ import 'package:provider/provider.dart';
 import 'package:regisapp/component/component.dart';
 import 'package:regisapp/model/post_model.dart';
 import 'package:regisapp/notification/customer_notification.dart';
+import 'package:regisapp/page/manegement/covidstat.dart';
 import 'package:regisapp/page/manegement/noti.dart';
 import 'package:regisapp/page/manegement/post.dart';
 import 'package:regisapp/page/manegement/register.dart';
+import 'package:regisapp/page/manegement/reserve_detail.dart';
+import 'package:regisapp/page/manegement/reserve_history.dart';
 import 'package:regisapp/page/postdetail_page.dart';
 import 'package:regisapp/page/register.dart';
 import 'package:regisapp/page/register_page.dart';
+import 'package:regisapp/provider/bloc/notification_bloc.dart';
 import 'package:regisapp/provider/bloc/post_bloc.dart';
+import 'package:regisapp/provider/bloc/reserve_bloc.dart';
+import 'package:regisapp/provider/event/notification_event.dart';
 import 'package:regisapp/provider/event/post_event.dart';
+import 'package:regisapp/provider/event/reserve_event.dart';
 import 'package:regisapp/provider/state/post_state.dart';
 import 'package:regisapp/source/source.dart';
 import 'package:regisapp/style/color.dart';
@@ -36,16 +43,21 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _onRefresh() async {
     Future.delayed(const Duration(seconds: 0));
     context.read<PostBloc>().add(FetchPost());
+   
+  
   }
-@override
+ 
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
-   _onRefresh();
+    _onRefresh();
+    
+    
   }
+
   @override
   Widget build(BuildContext context) {
-    
     Size size = MediaQuery.of(context).size;
     return Consumer<NotificationManager>(builder: (context, value, child) {
       return BlocBuilder<PostBloc, PostState>(
@@ -88,7 +100,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildSlider(List<PostModel> posts) {
-    
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -131,8 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
         children: [
           Component(
-              
-                child: InkWell(
+              child: InkWell(
                   onTap: () => Navigator.push(context,
                       MaterialPageRoute(builder: (_) => const PostPage())),
                   focusColor: primaryColor,
@@ -150,6 +160,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       ]))),
           Component(
               child: InkWell(
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const CovidStatistic())),
                   focusColor: primaryColor,
                   borderRadius: BorderRadius.circular(10),
                   child: Column(
@@ -165,8 +179,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       ]))),
           Component(
               child: InkWell(
-                 onTap: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => const RegisterCovidPage())),
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const RegisterCovidPage())),
                   focusColor: primaryColor,
                   borderRadius: BorderRadius.circular(10),
                   child: Column(
@@ -182,14 +198,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       ]))),
           Component(
               child: InkWell(
-                 onTap: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => const NotiRegisterPage())),
+                  onTap: () async => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const Reserve_Detail())),
                   focusColor: primaryColor,
                   borderRadius: BorderRadius.circular(10),
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
-                        Icon(Icons.notifications_active_rounded, size: 40),
+                        Icon(Icons.pending_actions, size: 40),
                         Center(
                             child: Text(
                           "ນັດໝາຍສັກວັກຊີນ",
@@ -199,6 +217,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       ]))),
           Component(
               child: InkWell(
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const Reserve_History())),
                   focusColor: primaryColor,
                   borderRadius: BorderRadius.circular(10),
                   child: Column(

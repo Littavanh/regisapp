@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:regisapp/model/respone_model.dart';
@@ -218,6 +219,56 @@ class ReserveModel {
       }
     } on SocketException catch (e) {
       throw BadRequestException(error: e.toString());
+    }
+  }
+
+  static Future<ResponseModel> cancelReserve({required ReserveModel data,required int id}) async {
+    try {
+      final post = await http.post(Uri.parse(url + '/reserve/cancel/$id'),
+          headers: {'Authorization': token, 'Content-Type': 'application/json'},
+          body: data.toJson());
+      if (post.statusCode == 201) {
+        SocketController.sendNotification('notifi', "Cancel reserve");
+        return ResponseModel.fromJson(source: post.body, code: post.statusCode);
+      } else {
+        throw FetchDataException(error: post.body);
+      }
+    } on SocketException catch (e) {
+      throw BadRequestException(error: e.toString());
+    }
+  }
+  static Future<List<ReserveModel>> fetchUserPending() async {
+    try {
+      final response = await http
+          .get(Uri.parse(url + '/reserve/userpending'), headers: {'Authorization': token});
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body)['reserve']
+            .cast<Map<String, dynamic>>()
+            .map<ReserveModel>((data) => ReserveModel.fromMap(data))
+            .toList();
+      } else {
+        throw FetchDataException(error: response.body);
+      }
+    } on Exception catch (e) {
+      throw e.toString();
+    }
+  }
+  static Future<List<ReserveModel>> fetchUserComplete() async {
+    try {
+      final response = await http
+          .get(Uri.parse(url + '/reserve/usercomplete'), headers: {'Authorization': token});
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body)['reserve']
+            .cast<Map<String, dynamic>>()
+            .map<ReserveModel>((data) => ReserveModel.fromMap(data))
+            .toList();
+           
+            
+      } else {
+        throw FetchDataException(error: response.body);
+      }
+    } on Exception catch (e) {
+      throw e.toString();
     }
   }
 // static Future<ResponseModel> postReserve({required ReserveModel data}) async {

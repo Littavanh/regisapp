@@ -20,6 +20,32 @@ class ReserveBloc<ReserveModel> extends Bloc<ReserveEvent, ReserveState> {
       }
     });
 
+    on<FetchUserComplete>((event, emit) async {
+      emit(ReserveLoadingState());
+
+      try {
+        final reserves = await reserveRepo.fetchUserComplete(
+          );
+      
+        emit(ReserveLoadCompleteState(reserves: reserves,));
+      } on Exception catch (e) {
+        emit(ReserveErrorState(error: e.toString()));
+      }
+    });
+
+     on<FetchUserPending>((event, emit) async {
+      emit(ReserveLoadingState());
+
+      try {
+        final reserves = await reserveRepo.fetchUserPending(
+          );
+      
+        emit(ReserveLoadCompleteState(reserves: reserves,));
+      } on Exception catch (e) {
+        emit(ReserveErrorState(error: e.toString()));
+      }
+    });
+
     on<FetchMemberReserve>((event, emit) async {
       emit(ReserveLoadingState());
 
@@ -32,4 +58,6 @@ class ReserveBloc<ReserveModel> extends Bloc<ReserveEvent, ReserveState> {
       }
     });
   }
+
+  
 }
