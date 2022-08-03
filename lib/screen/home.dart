@@ -43,17 +43,13 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _onRefresh() async {
     Future.delayed(const Duration(seconds: 0));
     context.read<PostBloc>().add(FetchPost());
-   
-  
   }
- 
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _onRefresh();
-    
-    
   }
 
   @override
@@ -160,10 +156,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       ]))),
           Component(
               child: InkWell(
-                  onTap: () => Navigator.push(
+                  onTap: () {
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) => const CovidStatistic())),
+                          builder: (_) => const CovidStatistic()));
+                          
+                  },
                   focusColor: primaryColor,
                   borderRadius: BorderRadius.circular(10),
                   child: Column(
@@ -198,10 +197,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       ]))),
           Component(
               child: InkWell(
-                  onTap: () async => Navigator.push(
+                  onTap: () async {
+                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) => const Reserve_Detail())),
+                          builder: (_) => const ReserveDetails()));
+                          context.read<ReserveBloc>().add(FetchUserPending());
+                  },
                   focusColor: primaryColor,
                   borderRadius: BorderRadius.circular(10),
                   child: Column(
@@ -217,10 +219,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       ]))),
           Component(
               child: InkWell(
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => const Reserve_History())),
+                  onTap: () async{
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const Reserve_History()));
+                            context.read<ReserveBloc>().add(FetchUserComplete());
+                  },
                   focusColor: primaryColor,
                   borderRadius: BorderRadius.circular(10),
                   child: Column(

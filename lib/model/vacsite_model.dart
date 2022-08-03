@@ -1,9 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
+
 import 'package:regisapp/source/exception.dart';
 import 'package:regisapp/source/source.dart';
-
 
 class VacsiteModel {
 final int? id;
@@ -78,10 +79,10 @@ final  String? updatedAt;
   }
 
   @override
-  bool operator ==(Object other) {
+  bool operator ==(covariant VacsiteModel other) {
     if (identical(this, other)) return true;
   
-    return other is VacsiteModel &&
+    return 
       other.id == id &&
       other.provinceId == provinceId &&
       other.name == name &&

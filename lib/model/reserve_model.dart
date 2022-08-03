@@ -6,6 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:regisapp/model/respone_model.dart';
+import 'package:regisapp/model/vaccine_model.dart';
+import 'package:regisapp/model/vacsite_model.dart';
 import 'package:regisapp/notification/socket/socket_controller.dart';
 import 'package:regisapp/source/exception.dart';
 
@@ -22,6 +24,8 @@ class ReserveModel {
   final String? isDelete;
   final String? createdAt;
   final String? updatedAt;
+final VaccineModel? vaccine;
+final VacsiteModel? vacsite;
 
   ReserveModel({
     this.id,
@@ -33,11 +37,12 @@ class ReserveModel {
     this.isDelete,
     this.createdAt,
     this.updatedAt,
+    this.vaccine,
+    this.vacsite,
   });
 
   ReserveModel copyWith({
     int? id,
-    String? userId,
     int? vaccineId,
     int? vaccinationSiteId,
     String? date,
@@ -46,6 +51,8 @@ class ReserveModel {
     String? isDelete,
     String? createdAt,
     String? updatedAt,
+    VaccineModel? vaccine,
+    VacsiteModel? vacsite,
   }) {
     return ReserveModel(
       id: id ?? this.id,
@@ -57,13 +64,14 @@ class ReserveModel {
       isDelete: isDelete ?? this.isDelete,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      vaccine: vaccine ?? this.vaccine,
+      vacsite: vacsite ?? this.vacsite,
     );
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
-      'userId': userId,
       'vaccineId': vaccineId,
       'vaccinationSiteId': vaccinationSiteId,
       'date': date,
@@ -72,62 +80,67 @@ class ReserveModel {
       'isDelete': isDelete,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
+      'vaccine': vaccine?.toMap(),
+      'vacsite': vacsite?.toMap(),
     };
   }
 
   factory ReserveModel.fromMap(Map<String, dynamic> map) {
     return ReserveModel(
       id: map['id'] != null ? map['id'] as int : null,
-      vaccineId: map['id'] != null ? map['vaccineId'] as int : null,
-      vaccinationSiteId:
-          map['id'] != null ? map['vaccinationSiteId'] as int : null,
-      date: map['date'] ?? '',
-      level: map['level'],
+      vaccineId: map['vaccineId'] != null ? map['vaccineId'] as int : null,
+      vaccinationSiteId: map['vaccinationSiteId'] != null ? map['vaccinationSiteId'] as int : null,
+      date: map['date'] as String,
+      level: map['level'] as int,
       status: map['status'] != null ? map['status'] as String : null,
       isDelete: map['isDelete'] != null ? map['isDelete'] as String : null,
       createdAt: map['createdAt'] != null ? map['createdAt'] as String : null,
       updatedAt: map['updatedAt'] != null ? map['updatedAt'] as String : null,
+      vaccine: map['Vaccine'] != null ? VaccineModel.fromMap(map['Vaccine'] as Map<String,dynamic>) : null,
+      // vacsite: map['Vaccinationsite'] != null ? VacsiteModel.fromMap(map['Vaccinationsite'] as Map<String,dynamic>) : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory ReserveModel.fromJson(String source) =>
-      ReserveModel.fromMap(json.decode(source)['reserve'] as Map<String, dynamic>);
+  factory ReserveModel.fromJson(String source) => ReserveModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
-    return 'ReserveModel(id: $id, userId: $userId, vaccineId: $vaccineId, vaccinationSiteId: $vaccinationSiteId, date: $date, level: $level, status: $status, isDelete: $isDelete, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'ReserveModel(id: $id, vaccineId: $vaccineId, vaccinationSiteId: $vaccinationSiteId, date: $date, level: $level, status: $status, isDelete: $isDelete, createdAt: $createdAt, updatedAt: $updatedAt, Vaccine: $vaccine, Vaccinationsite: $vacsite)';
   }
 
   @override
-  bool operator ==(Object other) {
+  bool operator ==(covariant ReserveModel other) {
     if (identical(this, other)) return true;
-
-    return other is ReserveModel &&
-        other.id == id &&
-        other.vaccineId == vaccineId &&
-        other.vaccinationSiteId == vaccinationSiteId &&
-        other.date == date &&
-        other.level == level &&
-        other.status == status &&
-        other.isDelete == isDelete &&
-        other.createdAt == createdAt &&
-        other.updatedAt == updatedAt;
+  
+    return 
+      other.id == id &&
+      other.vaccineId == vaccineId &&
+      other.vaccinationSiteId == vaccinationSiteId &&
+      other.date == date &&
+      other.level == level &&
+      other.status == status &&
+      other.isDelete == isDelete &&
+      other.createdAt == createdAt &&
+      other.updatedAt == updatedAt &&
+      other.vaccine == vaccine &&
+      other.vacsite == vacsite;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-        userId.hashCode ^
-        vaccineId.hashCode ^
-        vaccinationSiteId.hashCode ^
-        date.hashCode ^
-        level.hashCode ^
-        status.hashCode ^
-        isDelete.hashCode ^
-        createdAt.hashCode ^
-        updatedAt.hashCode;
+      vaccineId.hashCode ^
+      vaccinationSiteId.hashCode ^
+      date.hashCode ^
+      level.hashCode ^
+      status.hashCode ^
+      isDelete.hashCode ^
+      createdAt.hashCode ^
+      updatedAt.hashCode ^
+      vaccine.hashCode ^
+      vacsite.hashCode;
   }
 
   static Future<ReserveModel?> fetchMemberReserveNotification() async {
@@ -222,11 +235,11 @@ class ReserveModel {
     }
   }
 
-  static Future<ResponseModel> cancelReserve({required ReserveModel data,required int id}) async {
+  static Future<ResponseModel> cancelReserve({required int id,required int vaccineId, required int vaccinationSiteId,required int level}) async {
     try {
       final post = await http.post(Uri.parse(url + '/reserve/cancel/$id'),
           headers: {'Authorization': token, 'Content-Type': 'application/json'},
-          body: data.toJson());
+          body: jsonEncode({"vaccineId": vaccineId, "vaccinationSiteId": vaccinationSiteId,"level":level}));
       if (post.statusCode == 201) {
         SocketController.sendNotification('notifi', "Cancel reserve");
         return ResponseModel.fromJson(source: post.body, code: post.statusCode);
