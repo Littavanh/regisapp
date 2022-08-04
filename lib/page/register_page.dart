@@ -62,7 +62,7 @@ class _RegisScreenState extends State<RegisScreen> {
                   child: ElevatedButton(
                       onPressed: () {
                         final reserve = ReserveModel(
-         
+                      
                         vaccineId: vaccineId,
                         vaccinationSiteId: vacsiteId,
                         date: sqldate.format(DateTime.parse(date)),
@@ -326,11 +326,11 @@ class _RegisScreenState extends State<RegisScreen> {
         ));
   }
 
-  void addReserve(ReserveModel reserve) async {
+  void addReserve(ReserveModel data) async {
     myProgress(context, null);
     
 
-     await ReserveModel.postReserve(data: reserve).then((value) async {
+     await ReserveModel.postReserve(data: data).then((value) async {
       Navigator.pop(context);
       showCompletedDialog(
               context: context,
