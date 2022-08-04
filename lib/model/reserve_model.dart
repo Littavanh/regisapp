@@ -104,7 +104,7 @@ class ReserveModel {
       vaccine: map['Vaccine'] != null
           ? VaccineModel.fromMap(map['Vaccine'] as Map<String, dynamic>)
           : null,
-      // vacsite: map['Vaccinationsite'] != null ? VacsiteModel.fromMap(map['Vaccinationsite'] as Map<String,dynamic>) : null,
+      vacsite: map['Vaccinationsite'] != null ? VacsiteModel.fromMap(map['Vaccinationsite'] as Map<String,dynamic>) : null,
     );
   }
 
@@ -248,9 +248,10 @@ class ReserveModel {
       required int vaccinationSiteId,
       required int level}) async {
     try {
-      final post = await http.post(Uri.parse(url + '/reserve/cancel/$id'),
+      final post = await http.put(Uri.parse(url + '/reserve/cancel/'),
           headers: {'Authorization': token, 'Content-Type': 'application/json'},
           body: jsonEncode({
+            "id":id,
             "vaccineId": vaccineId,
             "vaccinationSiteId": vaccinationSiteId,
             "level": level

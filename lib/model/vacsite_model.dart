@@ -60,7 +60,7 @@ final  String? updatedAt;
   factory VacsiteModel.fromMap(Map<String, dynamic> map) {
     return VacsiteModel(
       id: map['id'] != null ? map['id'] as int : null,
-      provinceId: map['provinceId'] as int,
+      provinceId: map['provinceId']?.toInt() ?? 0,
       name: map['name'] as String,
       vaccsitestatus: map['vaccsitestatus'] != null ? map['vaccsitestatus'] as String : null,
       isDelete: map['isDelete'] != null ? map['isDelete'] as String : null,

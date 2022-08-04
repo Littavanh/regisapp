@@ -22,7 +22,17 @@ class _CustomerNotificationState extends State<CustomerNotification> {
     await Future.delayed(const Duration(seconds: 0));
     context.read<NotificationBloc>().add(FetchMemberNotification());
   }
+ @override
+void initState() {
+    SocketController.socket.on('notifi_msg', (data) {
+      if (isAdmin || isEmployee) {
+        _onRefresh();
+      }
+    });
 
+    _onRefresh();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;

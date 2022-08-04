@@ -99,9 +99,22 @@ class _Reserve_HistoryState extends State<Reserve_History> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("ວັນທີສັກ: ${reserve.date}", style: bodyText2Bold),
-                    Text('ລາຍລະອຽດ: ເຂັມທີ ${reserve.level}, ${reserve.vaccine!.name}',
+                    const Divider(color: primaryColor,),
+                    const Text("ລາຍລະອຽດ: ", style: bodyText2Bold),
+                    Text('*ເຂັມທີ ${reserve.level}',
+                    
                         softWrap: true,
-                        
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis),
+                        Text('*ຊະນິດວັກຊີນ ${reserve.vaccine!.name}',
+                    
+                        softWrap: true,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis),
+                         Text('*ສະຖານທີ່ສັກ ${reserve.vacsite!.name}',
+                    
+                        softWrap: true,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis),
                   ],
                 ),
