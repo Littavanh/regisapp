@@ -323,7 +323,7 @@ class _RegisterCovidPageState extends State<RegisterCovidPage> {
             onChanged: (value) {
               for (var element in vaccines) {
                 if (element.name == value) {
-              vaccineId = element.id ?? 0;
+              vaccineId = element.id ;
                   return;
                 }
               }}

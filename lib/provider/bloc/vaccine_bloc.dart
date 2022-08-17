@@ -16,5 +16,16 @@ class VaccineBloc extends Bloc<VaccineEvent, VaccineState> {
         emit(VaccineErrorState(error: e.toString()));
       }
     });
+
+    on<FetchAllVaccine>((event, emit) async {
+      emit(VaccineLoadingState());
+
+      try {
+        final vaccines = await vaccineRepo.fetchAllVaccine();
+        emit(VaccineLoadCompleteState(vaccines: vaccines));
+      } on Exception catch (e) {
+        emit(VaccineErrorState(error: e.toString()));
+      }
+    });
   }
 }

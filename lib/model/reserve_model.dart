@@ -242,6 +242,27 @@ class ReserveModel {
     }
   }
 
+static Future<ResponseModel> completeReserve(
+      {required int id,
+      }) async {
+    try {
+      final post = await http.put(Uri.parse(url + '/reserve/'),
+          headers: {'Authorization': token, 'Content-Type': 'application/json'},
+          body: jsonEncode({
+            "id":id,
+           
+          }));
+      if (post.statusCode == 201) {
+        SocketController.sendNotification('notifi', "complete reserve");
+        return ResponseModel.fromJson(source: post.body, code: post.statusCode);
+      } else {
+        throw FetchDataException(error: post.body);
+      }
+    } on SocketException catch (e) {
+      throw BadRequestException(error: e.toString());
+    }
+  }
+
   static Future<ResponseModel> cancelReserve(
       {required int id,
       required int vaccineId,

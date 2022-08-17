@@ -14,6 +14,7 @@ import 'package:regisapp/page/manegement/post.dart';
 import 'package:regisapp/page/manegement/register.dart';
 import 'package:regisapp/page/manegement/reserve_detail.dart';
 import 'package:regisapp/page/manegement/reserve_history.dart';
+import 'package:regisapp/page/manegement/search_vaccine.dart';
 import 'package:regisapp/page/postdetail_page.dart';
 import 'package:regisapp/page/register.dart';
 import 'package:regisapp/page/register_page.dart';
@@ -235,6 +236,28 @@ class _HomeScreenState extends State<HomeScreen> {
                         Center(
                             child: Text(
                           "ປະຫວັດການສັກວັກຊີນ",
+                          textAlign: TextAlign.center,
+                          style: bodyText2Bold,
+                        ))
+                      ]))),
+                      Component(
+              child: InkWell(
+                  onTap: () async{
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const SearchVaccine()));
+                            // context.read<ReserveBloc>().add(FetchUserComplete());
+                  },
+                  focusColor: primaryColor,
+                  borderRadius: BorderRadius.circular(10),
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(Icons.manage_search_outlined, size: 40),
+                        Center(
+                            child: Text(
+                          "ຄົ້ນຫາວັກຊີນ",
                           textAlign: TextAlign.center,
                           style: bodyText2Bold,
                         ))

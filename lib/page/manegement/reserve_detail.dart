@@ -20,13 +20,13 @@ class ReserveDetails extends StatefulWidget {
 }
 
 class _ReserveDetailsState extends State<ReserveDetails> {
-  
   Future<void> _onRefresh() async {
     Future.delayed(const Duration(seconds: 0));
     context.read<ReserveBloc>().add(FetchUserPending());
   }
+
   @override
-void initState() {
+  void initState() {
     SocketController.socket.on('notifi_msg', (data) {
       if (isAdmin || isEmployee) {
         _onRefresh();
@@ -36,10 +36,10 @@ void initState() {
     _onRefresh();
     super.initState();
   }
- 
+
   @override
   Widget build(BuildContext context) {
-   return Scaffold(
+    return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
         title: const Text("ນັດໝາຍການສັກວັກຊີນ"),
@@ -75,9 +75,7 @@ void initState() {
                       itemCount: state.reserves.length,
                       itemBuilder: (_, index) {
                         return buildCard(state.reserves[index]);
-                      }
-                      
-                      ),
+                      }),
                 );
               }
 
@@ -90,20 +88,18 @@ void initState() {
           )),
     );
   }
-Widget buildCard(ReserveModel reserve) {
-    return InkWell( 
+
+  Widget buildCard(ReserveModel reserve) {
+    return InkWell(
       child: Component(
-        
         padding: EdgeInsets.zero,
         margin: const EdgeInsets.only(top: 12),
         child: Container(
-          
           padding: const EdgeInsets.all(10),
           width: double.infinity,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-          
               Flexible(
                 flex: 1,
                 fit: FlexFit.tight,
@@ -113,32 +109,39 @@ Widget buildCard(ReserveModel reserve) {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("ວັນທີສັກ: ${reserve.date}", style: bodyText2Bold),
-                    const Divider(color: primaryColor,),
+                    const Divider(
+                      color: primaryColor,
+                    ),
                     const Text("ລາຍລະອຽດ: ", style: bodyText2Bold),
                     Text('*ເຂັມທີ ${reserve.level}',
-                    
                         softWrap: true,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis),
-                        Text('*ຊະນິດວັກຊີນ ${reserve.vaccine!.name}',
-                    
+                    Text('*ຊະນິດວັກຊີນ ${reserve.vaccine!.name}',
                         softWrap: true,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis),
-                         Text('*ສະຖານທີ່ສັກ ${reserve.vacsite!.name}',
-                    
+                    Text('*ສະຖານທີ່ສັກ ${reserve.vacsite!.name}',
                         softWrap: true,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis),
                   ],
                 ),
               ),
-    
-              
               Column(
                 children: [
-                
-            
+                  ConfirmButton(onPressed: () {
+                    showQuestionDialog(
+                            context: context,
+                            title: 'ຢືນຢັນ',
+                            content: "ຢືນຢັນວ່າໄດ້ສັກວັກຊີນແລ້ວ")
+                        .then((value) {
+                      if (value != null && value) {
+                        _completeReserve(reserve);
+                      }
+                    });
+                  }),
+                  const SizedBox(height: 5,),
                   DeleteButton(onPressed: () {
                     showQuestionDialog(
                             context: context,
@@ -146,12 +149,10 @@ Widget buildCard(ReserveModel reserve) {
                             content: "ຕ້ອງການຍົກເລີກການຈອງແທ້ບໍ?")
                         .then((value) {
                       if (value != null && value) {
-                        
                         _cancelReserve(reserve);
-                       
                       }
                     });
-                  })
+                  }),
                 ],
               ),
             ],
@@ -160,7 +161,8 @@ Widget buildCard(ReserveModel reserve) {
       ),
     );
   }
-   Widget _isStateEmty({String? message}) {
+
+  Widget _isStateEmty({String? message}) {
     return Center(
         child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -179,10 +181,15 @@ Widget buildCard(ReserveModel reserve) {
 
   void _cancelReserve(ReserveModel data) async {
     myProgress(context, null);
-    await ReserveModel.cancelReserve(id: data.id ?? 0, vaccineId: data.vaccineId ?? 0, vaccinationSiteId: data.vaccinationSiteId ?? 0, level: data.level).then((value) {
+    await ReserveModel.cancelReserve(
+            id: data.id ?? 0,
+            vaccineId: data.vaccineId ?? 0,
+            vaccinationSiteId: data.vaccinationSiteId ?? 0,
+            level: data.level)
+        .then((value) {
       if (value.code == 200) {
         Navigator.pop(context);
-        
+
         showCompletedDialog(
                 context: context,
                 title: 'ຍົກເລີກ',
@@ -198,6 +205,30 @@ Widget buildCard(ReserveModel reserve) {
     }).catchError((e) {
       Navigator.pop(context);
       showFailDialog(context: context, title: 'ຍົກເລີກ', content: e.toString());
+    });
+  }
+
+  void _completeReserve(ReserveModel data) async {
+    myProgress(context, null);
+    await ReserveModel.completeReserve(id: data.id ?? 0).then((value) {
+      if (value.code == 200) {
+        Navigator.pop(context);
+
+        showCompletedDialog(
+                context: context,
+                title: 'ຢືນຢັນ',
+                content: "ທ່ານສັກວັກຊີນສຳເລັດແລ້ວ")
+            .then((value) => _onRefresh());
+      } else {
+        Navigator.pop(context);
+        showFailDialog(
+            context: context,
+            title: 'ຢືນຢັນ',
+            content: "ທ່ານສັກວັກຊີນສຳເລັດແລ້ວ");
+      }
+    }).catchError((e) {
+      Navigator.pop(context);
+      showFailDialog(context: context, title: 'ຢືນຢັນ', content: e.toString());
     });
   }
 }

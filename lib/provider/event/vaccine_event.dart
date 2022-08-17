@@ -11,6 +11,9 @@ class FetchVaccine extends VaccineEvent {
     required this.vacsiteId,
   });
 }
+class FetchAllVaccine extends VaccineEvent {
+  
+}
 
 class FetchAllVacsite extends VaccineEvent {}
 

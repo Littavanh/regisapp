@@ -7,14 +7,14 @@ import 'package:regisapp/source/exception.dart';
 import 'package:regisapp/source/source.dart';
 
 class VaccineModel {
-   int? id;
+   int id;
     String name;
     String? vaccinetype;
     String? isDelete;
     String? createdAt;
     String? updatedAt;
   VaccineModel({
-    this.id,
+    required this.id,
     required this.name,
     this.vaccinetype,
     this.isDelete,
@@ -59,7 +59,7 @@ class VaccineModel {
 
   factory VaccineModel.fromMap(Map<String, dynamic> map) {
     return VaccineModel(
-      id: map['id'] != null ? map['id'] as int : null,
+      id: map['id'] as int,
       name: map['name'] as String,
       vaccinetype: map['vaccinetype'] != null ? map['vaccinetype'] as String : null,
       isDelete: map['isDelete'] != null ? map['isDelete'] as String : null,
@@ -78,10 +78,10 @@ class VaccineModel {
   }
 
   @override
-  bool operator ==(Object other) {
+  bool operator ==(covariant VaccineModel other) {
     if (identical(this, other)) return true;
   
-    return other is VaccineModel &&
+    return 
       other.id == id &&
       other.name == name &&
       other.vaccinetype == vaccinetype &&
@@ -98,6 +98,23 @@ class VaccineModel {
       isDelete.hashCode ^
       createdAt.hashCode ^
       updatedAt.hashCode;
+  }
+  static Future<List<VaccineModel>> fetchAllVaccine() async {
+    try {
+      final response = await http.get(Uri.parse(url + '/vaccines/'),
+          headers: {'Authorization': token});
+      if (response.statusCode == 200) {
+        return json
+            .decode(response.body)['vaccines']
+            .cast<Map<String, dynamic>>()
+            .map<VaccineModel>((data) => VaccineModel.fromMap(data))
+            .toList();
+      } else {
+        throw FetchDataException(error: response.body);
+      }
+    } on Exception catch (e) {
+      throw e.toString();
+    }
   }
    static Future<List<VaccineModel>> fetchVaccine({required int vacsiteId}) async {
     try {
@@ -116,4 +133,6 @@ class VaccineModel {
       throw e.toString();
     }
   }
+
+ 
 }

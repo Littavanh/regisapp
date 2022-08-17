@@ -12,6 +12,7 @@ import 'package:regisapp/provider/bloc/reserve_bloc.dart';
 import 'package:regisapp/provider/bloc/user_bloc.dart';
 import 'package:regisapp/provider/bloc/vaccine_bloc.dart';
 import 'package:regisapp/provider/bloc/vacsite_bloc.dart';
+import 'package:regisapp/provider/bloc/vacsite_storage_bloc.dart';
 import 'package:regisapp/provider/notification_provider.dart';
 import 'package:regisapp/provider/repository/district_repository.dart';
 import 'package:regisapp/provider/repository/notification_repository.dart';
@@ -21,6 +22,7 @@ import 'package:regisapp/provider/repository/reserve_repository.dart';
 import 'package:regisapp/provider/repository/user_repository.dart';
 import 'package:regisapp/provider/repository/vaccine_repository.dart';
 import 'package:regisapp/provider/repository/vacsite_repository.dart';
+import 'package:regisapp/provider/repository/vacsite_storage_repository.dart';
 import 'package:regisapp/setting/sharesetting.dart';
 
 import 'package:regisapp/style/color.dart';
@@ -58,6 +60,9 @@ class MyApp extends StatelessWidget {
         BlocProvider<VaccineBloc>(
             create: (_context) =>
                 VaccineBloc(vaccineRepo: VaccineRepository())),
+                BlocProvider<VacsiteStorageBloc>(
+            create: (_context) =>
+                VacsiteStorageBloc(vacsitestorageRepo:VacsiteStorageRepository())),
         BlocProvider<ReserveBloc>(
             create: (_context) =>
                 ReserveBloc(reserveRepo: ReserveRepository())),

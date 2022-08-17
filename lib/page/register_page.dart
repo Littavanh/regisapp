@@ -319,7 +319,7 @@ class _RegisScreenState extends State<RegisScreen> {
             onChanged: (value) {
               for (var element in vaccines) {
                 if (element.name == value) {
-              vaccineId = element.id ?? 0;
+              vaccineId = element.id;
                   return;
                 }
               }}
